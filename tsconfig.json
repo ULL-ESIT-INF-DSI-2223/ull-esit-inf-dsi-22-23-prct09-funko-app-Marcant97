@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "Node16",
+    "rootDir": "./src",
+    "declaration": true,
+    "outDir": "./dist",
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "strictPropertyInitialization": true,
+    "strictNullChecks": true
+  }
+}
