@@ -1,6 +1,9 @@
 {
   "entryPoints": [
-    "./src/ejercicio-1/artista.ts",
+    "./src/modificacion/cliente.ts",
+    "./src/modificacion/leer.ts",
+    "./src/modificacion/leerCSV.ts",
+    "./src/modificacion/leerJSON.ts"
   ],
   "out": "./docs"
 }

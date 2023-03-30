@@ -1,17 +1,21 @@
-// Escriba una clase con un método de plantilla que consista en un único paso "procesar", que lleve a cabo la lectura 
-// de un fichero CSV o un fichero JSON con los formatos anteriormente especificados y que devuelva dos arrays: 
-// uno con los beneficios de los elementos de la mochila y otro con los pesos de los elementos de la mochila. 
-// El método de plantilla también deberá hacer uso de dos métodos de enganche o hooks.
-
+/**
+ * Tipo datos.
+ */
 export type datos = {
   beneficios: number[];
   pesos: number[];
 }
 
-
+/**
+ * Clase abstracta Leer
+ */
 export abstract class Leer {
 
+  /**
+   * elemento datos
+   */
   protected leer_datos: datos;
+
   /**
    * Constructor por defecto
    */
@@ -23,7 +27,7 @@ export abstract class Leer {
   }
 
   /**
-   * método plantilla
+   * método plantilla run
    */
   public run(): datos {
     this.hook1();
@@ -33,7 +37,8 @@ export abstract class Leer {
   }
 
   /**
-   * método procesar
+   * método abstracto procesar
+   * @returns elemento de tipo datos.
    */
   protected abstract procesar(): datos;
 

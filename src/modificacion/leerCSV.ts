@@ -1,11 +1,21 @@
 import {readFileSync} from 'fs';
 import {Leer, datos} from './leer.js';
 
+/**
+ * Clase LeerCSV que implementa la clase Leer.
+ */
 export class LeerCSV extends Leer {
+  /**
+   * Constructor por defecto
+   */
   constructor() { 
     super();
   }
   
+  /**
+   * implementacion del método procesar
+   * @returns elemento de tipo datos
+   */
   protected procesar(): datos {
     const contenido = readFileSync('src/modificacion/datos2.csv', 'utf8');
     const lineas: string[] = contenido.split('\n');

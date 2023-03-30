@@ -6,12 +6,17 @@ import {Leer, datos} from './leer.js';
  * Clase leerJSON que extiende la clase Leer
  */
 export class LeerJSON extends Leer {
+  
+  /**
+   * constructor por defecto.
+   */
   constructor() {
     super();
   }
 
   /**
    * Implementación del método procesar
+   * @returns elemento de tipo datos
    */
   protected procesar(): datos {
     const contenido = readFileSync('src/modificacion/datos1.json', 'utf8');
