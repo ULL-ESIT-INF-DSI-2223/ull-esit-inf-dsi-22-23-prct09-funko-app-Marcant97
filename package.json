@@ -2,10 +2,10 @@
   "name": "practica-9",
   "version": "1.0.0",
   "description": "",
-  "main": "basicFunctions.js",
+  "main": "cliente.js",
   "type": "module",
   "scripts": {
-    "dev": "tsc-watch --onSuccess \"node dist/yargs.js\"",
+    "start": "tsc-watch --onSuccess \"node dist/modificacion/cliente.js\"",
     "doc": "typedoc",
     "test": "mocha",
     "coverage": "c8 npm test && c8 report --reporter=lcov"
