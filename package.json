@@ -2,10 +2,10 @@
   "name": "practica-9",
   "version": "1.0.0",
   "description": "",
-  "main": "cliente.js",
+  "main": "funko.js",
   "type": "module",
   "scripts": {
-    "start": "tsc-watch --onSuccess \"node dist/modificacion/cliente.js\"",
+    "start": "tsc-watch --onSuccess \"node dist/funko.js\"",
     "doc": "typedoc",
     "test": "mocha",
     "coverage": "c8 npm test && c8 report --reporter=lcov"

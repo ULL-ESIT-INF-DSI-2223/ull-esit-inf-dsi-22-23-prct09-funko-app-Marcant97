@@ -1,0 +1,12 @@
+{
+  "id": 1,
+  "nombre": "Mario",
+  "descripcion": "El personaje principal de la saga de videojuegos de Nintendo",
+  "tipo": "Personaje",
+  "genero": "Masculino",
+  "franquicia": "Super Mario",
+  "numero": 1,
+  "exclusivo": false,
+  "caracteristicasEspeciales": "Salto",
+  "valorMercado": 100000
+}
