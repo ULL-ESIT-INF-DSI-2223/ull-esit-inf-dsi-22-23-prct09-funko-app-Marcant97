@@ -9,7 +9,9 @@
 // Características especiales. Debe ser una cadena de caracteres que indique las característica especiales del Funko como, por ejemplo, si brilla en la oscuridad o si su cabeza balancea.
 // Valor de mercado. Debe ser un valor numérico positivo.
 
-import {readFileSync, readdirSync } from 'fs';
+import { Console } from 'console';
+import {readFileSync, readdirSync, writeFileSync, unlinkSync } from 'fs';
+import chalk from "chalk";
 // import {spawn} from 'child_process';
 // import { string } from 'yargs';
 
@@ -46,7 +48,7 @@ export class Funko {
   private caracteristicasEspeciales: string;
   private valorMercado: number;
 
-  constructor(nombre_: string, descripcion_: string, tipo_: Tipo, genero_: Genero, franquicia_: string, numero_: number, exclusivo_: boolean, caracteristicasEspeciales_: string, valorMercado_: number) {
+  constructor(nombre_: string, descripcion_: string, tipo_: Tipo, genero_: Genero, franquicia_: string, numero_: number, exclusivo_: boolean, caracteristicasEspeciales_: string, valorMercado_: number, ID_: number) {
     this.nombre = nombre_;
     this.descripcion = descripcion_;
     this.tipo = tipo_;
@@ -56,6 +58,9 @@ export class Funko {
     this.exclusivo = exclusivo_;
     this.caracteristicasEspeciales = caracteristicasEspeciales_;
     this.valorMercado = valorMercado_;
+    this.ID = ID_;
+
+    // mirar que hacer con el id.
   }
 
   get getID(): number {
@@ -141,7 +146,7 @@ export class Funko {
 }
 
 
-
+const lista_funkos: Funko[] = [];
 
 
 
@@ -152,16 +157,77 @@ function leerFunkos(): void {
   const filenames = readdirSync("./database/" + nombre_usuario);
   
   console.log("\nCurrent directory filenames:");
-  filenames.forEach((file) => {
-    console.log(file);
-  });
+  // filenames.forEach((file) => {
+  //   console.log(file);
+  // });
 
   // leer el contenido de cada fichero
   filenames.forEach((file) => {
     const contenido = readFileSync("./database/" + nombre_usuario + "/" + file, 'utf8');
     const json = JSON.parse(contenido);
-    console.log(json.nombre);
+
+    lista_funkos.push(new Funko(json.nombre, json.descripcion, json.tipo, json.genero, json.franquicia, json.numero, json.exclusivo, json.caracteristicasEspeciales, json.valorMercado, json.id));
   });
+  // console.log(lista_funkos);
+  // imprimir error con chalk
+
 }
 
-leerFunkos();
+
+//! faltan los parámetros
+function addFunko(usuario:string, nombre: string, descripcion: string, tipo: Tipo, genero: Genero, franquicia: string, numero: number, exclusivo: boolean, caracteristicasEspeciales: string, valorMercado: number) {
+  // buscar el id más alto de la lista de funkos
+  
+  // * HAY QUE COMPROBAR QUE EL FUNKO EXISTE PRIMERO.
+
+  let id = 0;
+  const contenido = readFileSync("./database/lista_funkos.json", 'utf8');
+  const json = JSON.parse(contenido);
+  json.IDs.forEach((ID: number) => {
+    if (ID > id) {
+      id = ID;
+    }
+  });
+  id += 1;
+  console.log('Nuevo id: ' + id);
+
+  // crear funko con los parámetros
+  const funco_aux = new Funko(nombre, descripcion, tipo, genero, franquicia, numero, exclusivo, caracteristicasEspeciales, valorMercado, id);
+  // crear fichero correspondiente al funko
+  writeFileSync("./database/" + usuario + "/" + id + ".json", JSON.stringify(funco_aux));
+  // añadir el id del funko a la lista de ids
+  json.IDs.push(id); // ? NO ESTÁ FUNCIONANDO ESTA LÍNEA.
+  // ! HAY QUE MIRAR QUE PASA EN CASO DE QUE LA CARPETA DEL USUARIO NO EXISTA, TENGO QUE CREARLA.
+}
+
+
+function eliminarFunko(usuario:string, ID_: number) {
+  // eliminar el fichero correspondiente al funko
+  unlinkSync("./database/" + usuario + "/" + ID_ + ".json");
+
+  // eliminar el id del funko de la lista de ids
+  const contenido = readFileSync("./database/lista_funkos.json", 'utf8'); 
+  const json = JSON.parse(contenido);
+  const index = json.IDs.indexOf(ID_);
+  if (index > -1) {
+    json.IDs.splice(index, 1);
+  }
+}
+
+
+// function modificarFunko() {
+
+// }
+
+// function listaFunkos() {
+
+// }
+
+// function mostrarFunko() {
+
+// }
+
+
+addFunko('marco', 'Funko 1', 'Funko de prueba', Tipo.Pop, Genero.Animacion, 'Prueba', 1, false, 'Ninguna', 10);
+eliminarFunko('marco', 1);
+// addFunko('alberto', 'Funko 2', 'Funko de prueba', Tipo.Pop, Genero.Animacion, 'Prueba', 1, false, 'Ninguna', 10);
