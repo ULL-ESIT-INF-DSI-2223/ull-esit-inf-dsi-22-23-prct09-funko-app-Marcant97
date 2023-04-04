@@ -9,8 +9,8 @@
 // Características especiales. Debe ser una cadena de caracteres que indique las característica especiales del Funko como, por ejemplo, si brilla en la oscuridad o si su cabeza balancea.
 // Valor de mercado. Debe ser un valor numérico positivo.
 
-import { Console } from 'console';
-import {readFileSync, readdirSync, writeFileSync, unlinkSync, existsSync } from 'fs';
+// import { Console } from 'console';
+import {readFileSync, readdirSync, writeFileSync, unlinkSync, existsSync, mkdirSync } from 'fs';
 import chalk from "chalk";
 
 import yargs from 'yargs';
@@ -29,8 +29,8 @@ export enum Tipo {
 }
 
 export enum Genero {
-  Animacion = "Animación",
-  PeliculasYTV = "Películas y TV",
+  Animacion = "Animacion",
+  PeliculasYTV = "Peliculas y TV",
   Videojuegos = "Videojuegos",
   Deportes = "Deportes",
   Musica = "Música",
@@ -151,19 +151,18 @@ export class Funko {
 
 
 // function leerFunkos(): Funko[] {
-function leerFunkos(usuario: string): string[] {
+function leerFunkos(usuario: string): Funko[] {
   const nombre_usuario = usuario; 
   const filenames = readdirSync("./database/" + nombre_usuario);
-  const lista_nombres: string[] = [];
+  const lista_funkos: Funko[] = [];
 
   filenames.forEach((file) => {
     const contenido = readFileSync("./database/" + nombre_usuario + "/" + file, 'utf8');
     const json = JSON.parse(contenido);
-
-    lista_nombres.push(json.nombre);
+    lista_funkos.push(new Funko(json.nombre, json.descripcion, json.tipo, json.genero, json.franquicia, json.numero, json.exclusivo, json.caracteristicasEspeciales, json.valorMercado, json.ID));
   });
   
-  return lista_nombres;
+  return lista_funkos;
 }
 
 
@@ -172,8 +171,9 @@ function addFunko(id:number, usuario:string, nombre: string, descripcion: string
   const nombre_usuario = usuario;
   const path = "./database/" + nombre_usuario;
   if (existsSync(path) === false) {
-    console.log(`User ${usuario} does not exist`);
-    return false;
+    // si no existe la carpeta del usuario, la creo
+    mkdirSync("./database/" + nombre_usuario);
+
   }
   const filenames = readdirSync("./database/" + nombre_usuario);
   let bandera = true;
@@ -183,13 +183,38 @@ function addFunko(id:number, usuario:string, nombre: string, descripcion: string
     if (json.ID === id) {
       // el funko ya existe
       bandera = false;
+      console.log(chalk.red(`Funko already exists at ${json.user} collection!`));
     }
   });
-
   if (bandera === true) {
-    //! TENGO QUE REVISAR AQUÍ LO DE LOS ENUMS, TIRAR UN MENSAJE O ERROR CUANDO NO SE INTRODUZCA UN ENUM CORRECTO.
+
+    const array_tipos = Object.values(Tipo);
+    let bandera_tipo = false;
+    array_tipos.forEach((tipo_aux) => {
+      if (tipo_aux === tipo) {
+        bandera_tipo = true;
+      }
+    });
+    if (bandera_tipo === false) {
+      console.log(chalk.red(`Tipo ${tipo} does not exist`));
+      return false;
+    }
+
+    const array_generos = Object.values(Genero);
+    let bandera_genero = false;
+    array_generos.forEach((genero_aux) => {
+      if (genero_aux === genero) {
+        bandera_genero = true;
+      }
+    });
+    if (bandera_genero === false) {
+      console.log(chalk.red(`Genero ${genero} does not exist`));
+      return false;
+    }
+
     const funco_aux = new Funko(nombre, descripcion, tipo, genero, franquicia, numero, exclusivo, caracteristicasEspeciales, valorMercado, id);
     writeFileSync("./database/" + usuario + "/" + nombre + ".json", JSON.stringify(funco_aux));
+    console.log(chalk.green(`Funko added to ${usuario} collection!`));
   }
   return bandera;
 }
@@ -200,7 +225,7 @@ function eliminarFunko(usuario:string, ID_: number): boolean {
   const nombre_usuario = usuario;
   const path = "./database/" + nombre_usuario;
   if (existsSync(path) === false) {
-    console.log(`User ${usuario} does not exist`);
+    console.log(chalk.red(`User ${usuario} does not exist`));
     return false;
   }
   const filenames = readdirSync("./database/" + nombre_usuario);
@@ -219,13 +244,16 @@ function eliminarFunko(usuario:string, ID_: number): boolean {
   });
 
   if (bandera === false) {
+    console.log(chalk.red(`Funko not found at ${usuario} collection!`));
     return false;
   }
   else {
     // eliminar el fichero correspondiente al funko
     unlinkSync("./database/" + usuario + "/" + nombre_aux + ".json");
+    console.log(chalk.green(`Funko removed from ${usuario} collection!`));
     return true;
   }
+
 }
 
 
@@ -234,7 +262,7 @@ function modificarFunko(id:number, usuario:string, nombre: string, descripcion: 
   const nombre_usuario = usuario;
   const path = "./database/" + nombre_usuario;
   if (existsSync(path) === false) {
-    console.log(`User ${usuario} does not exist`);
+    console.log(chalk.red(`User ${usuario} does not exist`));
     return false;
   }
   const filenames = readdirSync("./database/" + nombre_usuario);
@@ -253,16 +281,42 @@ function modificarFunko(id:number, usuario:string, nombre: string, descripcion: 
   });
 
   if (bandera === false) {
+    console.log(chalk.red(`Funko not found at ${usuario} collection!`));
     return false;
   }
   else {
+    const array_tipos = Object.values(Tipo);
+    let bandera_tipo = false;
+    array_tipos.forEach((tipo_aux) => {
+      if (tipo_aux === tipo) {
+        bandera_tipo = true;
+      }
+    });
+    if (bandera_tipo === false) {
+      console.log(chalk.red(`Tipo ${tipo} does not exist`));
+      return false;
+    }
+
+    const array_generos = Object.values(Genero);
+    let bandera_genero = false;
+    array_generos.forEach((genero_aux) => {
+      if (genero_aux === genero) {
+        bandera_genero = true;
+      }
+    });
+    if (bandera_genero === false) {
+      console.log(chalk.red(`Genero ${genero} does not exist`));
+      return false;
+    }
     // eliminar el fichero correspondiente al funko
     unlinkSync("./database/" + usuario + "/" + nombre_aux + ".json"); 
     // crear el nuevo funko
     const funco_aux = new Funko(nombre, descripcion, tipo, genero, franquicia, numero, exclusivo, caracteristicasEspeciales, valorMercado, id);
     writeFileSync("./database/" + usuario + "/" + nombre + ".json", JSON.stringify(funco_aux));
+    console.log(chalk.green(`Funko modified at ${usuario} collection!`));
     return true;
   }
+
 }
 
 function listaFunkos(usuario: string): boolean {
@@ -270,11 +324,40 @@ function listaFunkos(usuario: string): boolean {
   const nombre_usuario = usuario;
   const path = "./database/" + nombre_usuario;
   if (existsSync(path) === false) {
-    console.log(`User ${usuario} does not exist`);
+    console.log(chalk.red(`User ${usuario} does not exist`));
     return false;
   }
-  console.log(`${usuario} Funko Pop collection:`);
-  console.log(leerFunkos(usuario));
+  const lista_funkos = leerFunkos(usuario);
+  if (lista_funkos.length === 0) {
+    console.log(chalk.red("No funkos in the collection"));
+    return false;
+  }
+  console.log(chalk.white(`${usuario} Funko Pop collection:`));
+  lista_funkos.forEach((funko) => {
+    console.log(chalk.white("-----------------------------------"));
+    console.log(chalk.white(`ID: ${funko.getID}`));
+    console.log(chalk.white(`Nombre: ${funko.getNombre}`));
+    console.log(chalk.white(`Descripcion: ${funko.getDescripcion}`));
+    console.log(chalk.white(`Tipo: ${funko.getTipo}`));
+    console.log(chalk.white(`Genero: ${funko.getGenero}`));
+    console.log(chalk.white(`Franquicia: ${funko.getFranquicia}`));
+    console.log(chalk.white(`Numero: ${funko.getNumero}`));
+    console.log(chalk.white(`Exclusivo: ${funko.getExclusivo}`));
+    console.log(chalk.white(`Caracteristicas Especiales: ${funko.getCaracteristicasEspeciales}`));
+    if (funko.getValorMercado <= 50) {
+      console.log(chalk.green(`Valor de mercado: ${funko.getValorMercado}`));
+    }
+    else if (funko.getValorMercado > 50 && funko.getValorMercado <= 100) {
+      console.log(chalk.yellow(`Valor de mercado: ${funko.getValorMercado}`));
+    }
+    else if (funko.getValorMercado > 100 && funko.getValorMercado <= 200) {
+      console.log(chalk.red(`Valor de mercado: ${funko.getValorMercado}`));
+    }    
+    else {
+      console.log(chalk.blue(`Valor de mercado: ${funko.getValorMercado}`));
+    }
+    console.log();
+  });
   return true;
 
 }
@@ -285,7 +368,7 @@ function mostrarFunko(usuario: string, id: number): boolean {
   const nombre_usuario = usuario;
   const path = "./database/" + nombre_usuario;
   if (existsSync(path) === false) {
-    console.log(`User ${usuario} does not exist`);
+    console.log(chalk.red(`User ${usuario} does not exist`));
     return false;
   }
   // 2. comprobar que el fichero existe
@@ -298,13 +381,35 @@ function mostrarFunko(usuario: string, id: number): boolean {
       // el funko ya existe
       bandera = true;
       mi_funko = new Funko(json.nombre, json.descripcion, json.tipo, json.genero, json.franquicia, json.numero, json.exclusivo, json.caracteristicasEspeciales, json.valorMercado, json.ID);
-      console.log(mi_funko);
+      console.log(chalk.white("-----------------------------------"));
+      console.log(chalk.white(`ID: ${mi_funko.getID}`));
+      console.log(chalk.white(`Nombre: ${mi_funko.getNombre}`));
+      console.log(chalk.white(`Descripcion: ${mi_funko.getDescripcion}`));
+      console.log(chalk.white(`Tipo: ${mi_funko.getTipo}`));
+      console.log(chalk.white(`Genero: ${mi_funko.getGenero}`));
+      console.log(chalk.white(`Franquicia: ${mi_funko.getFranquicia}`));
+      console.log(chalk.white(`Numero: ${mi_funko.getNumero}`));
+      console.log(chalk.white(`Exclusivo: ${mi_funko.getExclusivo}`));
+      console.log(chalk.white(`Caracteristicas Especiales: ${mi_funko.getCaracteristicasEspeciales}`));
+      if (mi_funko.getValorMercado <= 50) {
+        console.log(chalk.green(`Valor de mercado: ${mi_funko.getValorMercado}`));
+      }
+      else if (mi_funko.getValorMercado > 50 && mi_funko.getValorMercado <= 100) {
+        console.log(chalk.yellow(`Valor de mercado: ${mi_funko.getValorMercado}`));
+      }
+      else if (mi_funko.getValorMercado > 100 && mi_funko.getValorMercado <= 200) {
+        console.log(chalk.red(`Valor de mercado: ${mi_funko.getValorMercado}`));
+      }    
+      else {
+        console.log(chalk.blue(`Valor de mercado: ${mi_funko.getValorMercado}`));
+      }
+      console.log();
       
     }
   }
   );
   if (bandera === false) {
-    console.log(`Funko with ID ${id} does not exist`)
+    console.log(chalk.red(`Funko with ID ${id} does not exist`))
     return false;
   }
   else {
@@ -371,13 +476,7 @@ yargs(hideBin(process.argv)).command('add', 'Adds a funko', {
     demandOption: true
   }
 }, (argv) => {
-  const bandera = addFunko(argv.id, argv.user, argv.nombre, argv.descripcion, argv.tipo as Tipo, argv.genero as Genero, argv.franquicia, argv.numero, argv.exclusivo, argv.caracteristicasEspeciales, argv.valorMercado);
-  if (bandera === false) {
-    console.log(`Funko already exists at ${argv.user} collection!`);
-  }
-  else {
-    console.log(`Funko added to ${argv.user} collection!`);
-  }
+  addFunko(argv.id, argv.user, argv.nombre, argv.descripcion, argv.tipo as Tipo, argv.genero as Genero, argv.franquicia, argv.numero, argv.exclusivo, argv.caracteristicasEspeciales, argv.valorMercado);
 }).help().argv;
 
 
@@ -394,14 +493,8 @@ yargs(hideBin(process.argv)).command('remove', 'Removeses a funko', {
     demandOption: true
   }
 }, (argv) => {
-  //! MANEJAR SEGÚN RESULTADO
-  const bandera = eliminarFunko(argv.user, argv.id);
-  if (bandera === true) {
-    console.log(`Funko removed from ${argv.user} collection!`);
-  }
-  else {
-    console.log(`Funko not found at ${argv.user} collection!`);
-  }
+  eliminarFunko(argv.user, argv.id);
+
 }).help().argv;
 
 
@@ -463,13 +556,7 @@ yargs(hideBin(process.argv)).command('update', 'Modifies a funko', {
     demandOption: true
   }
 }, (argv) => {
-  const bandera = modificarFunko(argv.id, argv.user, argv.nombre, argv.descripcion, argv.tipo as Tipo, argv.genero as Genero, argv.franquicia, argv.numero, argv.exclusivo, argv.caracteristicasEspeciales, argv.valorMercado);
-  if (bandera === true) {
-    console.log(`Funko modified at ${argv.user} collection!`);
-  }
-  else {
-    console.log(`Funko not found at ${argv.user} collection!`);
-  }
+  modificarFunko(argv.id, argv.user, argv.nombre, argv.descripcion, argv.tipo as Tipo, argv.genero as Genero, argv.franquicia, argv.numero, argv.exclusivo, argv.caracteristicasEspeciales, argv.valorMercado);
 }).help().argv;
 
 
@@ -500,7 +587,3 @@ yargs(hideBin(process.argv)).command('read', 'Reads a funko', {
 }, (argv) => {
   mostrarFunko(argv.user, argv.id);
 }).help().argv;
-
-// addFunko('marco', 'Funko 1', 'Funko de prueba', Tipo.Pop, Genero.Animacion, 'Prueba', 1, false, 'Ninguna', 10);
-// eliminarFunko('marco', 1);
-// addFunko('alberto', 'Funko 2', 'Funko de prueba', Tipo.Pop, Genero.Animacion, 'Prueba', 1, false, 'Ninguna', 10);
