@@ -10,10 +10,10 @@
 # Práctica 9 - Aplicación de registro de Funko Pops
 
 ## Índice
-[1. Introducción](#introducción)
-[2. Ejercicios propuestos](#ejercicios-propuestos)
-[3. Ejercicio PE-103](#ejercicio-pe-103)
-[4. Conclusión](#conclusión)
+[1. Introducción](#introducción)  
+[2. Ejercicios propuestos](#ejercicios-propuestos)  
+[3. Ejercicio PE-103](#ejercicio-pe-103)  
+[4. Conclusión](#conclusión)  
 
 
 ### Introducción
