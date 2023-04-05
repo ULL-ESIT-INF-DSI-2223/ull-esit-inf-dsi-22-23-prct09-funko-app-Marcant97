@@ -1,10 +1,22 @@
-
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { addFunko, eliminarFunko, listaFunkos, mostrarFunko, modificarFunko } from './funciones.js';
 import { Genero, Tipo } from './types.js';
 
-//add
+/**
+ * add
+ * --user 
+ * --id
+ * --nombre
+ * --descripcion
+ * --tipo
+ * --genero
+ * --franquicia
+ * --numero
+ * --exclusivo
+ * --caracteristicasEspeciales
+ * --valorMercado
+ */
 yargs(hideBin(process.argv)).command('add', 'Adds a funko', {
   user: {
     description: 'User name',
@@ -66,7 +78,11 @@ yargs(hideBin(process.argv)).command('add', 'Adds a funko', {
 }).help().argv;
 
 
-// si lo recibido es remove, eliminar funko
+/**
+ * remove
+ * --user
+ * --id
+ */
 yargs(hideBin(process.argv)).command('remove', 'Removeses a funko', {
   user: {
     description: 'User name',
@@ -84,7 +100,20 @@ yargs(hideBin(process.argv)).command('remove', 'Removeses a funko', {
 }).help().argv;
 
 
-// si lo recibido es update, modificar funko
+/**
+ * update
+ * --user 
+ * --id
+ * --nombre
+ * --descripcion
+ * --tipo
+ * --genero
+ * --franquicia
+ * --numero
+ * --exclusivo
+ * --caracteristicasEspeciales
+ * --valorMercado
+ */
 yargs(hideBin(process.argv)).command('update', 'Modifies a funko', {
   user: {
     description: 'User name',
@@ -146,7 +175,10 @@ yargs(hideBin(process.argv)).command('update', 'Modifies a funko', {
 }).help().argv;
 
 
-// si lo recibido es list, listar funko
+/**
+ * list
+ * --user
+ */
 yargs(hideBin(process.argv)).command('list', 'Lists a funko', {
   user: {
     description: 'User name',
@@ -158,7 +190,11 @@ yargs(hideBin(process.argv)).command('list', 'Lists a funko', {
 }).help().argv;
 
 
-// si lo recibido es read, leer funko
+/**
+ * read
+ * --user
+ * --id
+ */
 yargs(hideBin(process.argv)).command('read', 'Reads a funko', {
   user: {
     description: 'User name',

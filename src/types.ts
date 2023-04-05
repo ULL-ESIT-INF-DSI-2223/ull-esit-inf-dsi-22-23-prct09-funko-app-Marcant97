@@ -1,3 +1,6 @@
+/**
+ * Enum para los tipos de funkos.
+ */
 export enum Tipo {
   Pop = "Pop!",
   PopRides = "Pop! Rides",
@@ -6,6 +9,9 @@ export enum Tipo {
   VynilPlatinum = "Vynil Platinum",
 }
 
+/**
+ * Enum para los géneros de funkos.
+ */
 export enum Genero {
   Animacion = "Animacion",
   PeliculasYTV = "Peliculas y TV",

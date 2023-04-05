@@ -3,7 +3,12 @@
     "./src/modificacion/cliente.ts",
     "./src/modificacion/leer.ts",
     "./src/modificacion/leerCSV.ts",
-    "./src/modificacion/leerJSON.ts"
+    "./src/modificacion/leerJSON.ts",
+    "./src/cliente.ts",
+    "./src/funko.ts",
+    "./src/types.ts",
+    "./src/funciones.ts"
+
   ],
   "out": "./docs"
 }
